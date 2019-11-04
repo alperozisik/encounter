@@ -1,0 +1,142 @@
+html {
+    display: block;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.title {
+    width: 100%;
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 28pt;
+    margin-bottom: 30pt;
+    font-weight: bold;
+}
+
+.page {
+    padding: 0;
+}
+
+.content {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.content-left {
+    width: 55%;
+}
+
+.content-right {
+    width: 45%;
+}
+
+.content>div {
+    vertical-align: top;
+    height: 100%;
+    display: table-cell;
+    padding: 10pt;
+}
+
+.roundRow {
+    height: 5%;
+    width: 100%;
+    display: table;
+}
+
+.roundRow>div {
+    display: table-cell;
+}
+
+.roundHeader {
+    width: 33%;
+}
+
+.initTableHeaderCell,
+.roundHeader {
+    background-color: #9E9E9E;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.initTableCol1 {
+    width: 45%;
+}
+
+.initTableCol2,
+.initTableCol3 {
+    width: 27%;
+}
+
+.initTable {
+    display: table;
+    width: 100%;
+    height: 95%;
+}
+
+.initTableHeader,
+.initTableRow {
+    display: table-row;
+    width: 100%;
+    height: 5%;
+}
+
+.initTableCell {
+    display: table-cell;
+    /* border: blue dotted 1px;
+    margin: -1px; */
+    border-color: #9E9E9E;
+    border-style: solid;
+    border-width: 0.5pt;
+    margin: -0.5pt;
+}
+
+.initTableCell,
+.roundRow>div {
+    vertical-align: middle;
+    padding: 3pt;
+}
+
+.monsterBox {
+    border: darkgray 0.5pt solid;
+    margin: -0.5pt;
+    height: 33.3333333%;
+    margin: 0;
+    padding: 0;
+}
+
+.monsterBox>* {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.monsterBox>textarea {
+    width: calc(100% - 0.5pt);
+    height: calc(100% - 20pt);
+    margin-left: -0.5pt;
+    font-size: 16pt;
+}
+
+.monsterBox>button {
+    height: 20pt;
+    margin-left: 5pt;
+}
+
+.monsterBoxParent {
+    height: calc(100% - 65.5pt);
+}
+
+textarea {
+    resize: none;
+}
+
+.roundField {
+    border-style: inset;
+}

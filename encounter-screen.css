@@ -1,0 +1,22 @@
+.page {
+    height: 960px;
+    background-color: #efe5d5;
+    margin: 0px;
+    margin-bottom: 20px;
+}
+
+.page:last-child {
+    margin-bottom: 63px;
+}
+
+.control {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border: 1px black solid;
+    padding: 20px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+}
