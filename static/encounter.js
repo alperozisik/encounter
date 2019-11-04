@@ -2,6 +2,7 @@ const reSpace = /\s+/g;
 const reRepeat = /(\d+)\s*x\s*(\d+)/gi;
 const rePunctuation = /(\:|\;|\,)\s*/g;
 const monstersInPages = new WeakMap();
+const dataUrl = "/data";
 
 function parse(btn, index) {
     const parent = btn.parentElement;
@@ -14,19 +15,21 @@ function parse(btn, index) {
 
     text = text.replace(rePunctuation, "$1 ");
     let monster = getMonster(text);
-    text = fixSections(monster);
+    if (monster) {
+        text = fixSections(monster);
 
-    textArea.value = text;
+        textArea.value = text;
 
 
-    const page = btn.parentElement.parentElement.parentElement.parentElement.parentElement;
-    const monstersInBlocks = monstersInPages.get(page) || [
-        [],
-        [],
-        []
-    ];
-    monsterInCombatTracker(page, monster, monstersInBlocks, index);
-    monstersInPages.set(page, monstersInBlocks);
+        const page = btn.parentElement.parentElement.parentElement.parentElement.parentElement;
+        const monstersInBlocks = monstersInPages.get(page) || [
+            [],
+            [],
+            []
+        ];
+        monsterInCombatTracker(page, monster, monstersInBlocks, index);
+        monstersInPages.set(page, monstersInBlocks);
+    }
 }
 
 const traverseRepeats = (result, str) => {
@@ -64,18 +67,22 @@ const getMonster = str => {
     let nameEnd = str.indexOf(":");
     let namePart = str.substring(0, nameEnd);
     let nameMatch = namePart.match(/(?:(.+?)\s*\((\d+)\)|(.+))/);
-    let name = nameMatch[1] || nameMatch[3];
-    let count = parseInt(nameMatch[2]) || 1;
-    let otherParts = str.substr(nameEnd + 1).trim().split(";").map(p => p.trim());
-    let monster = { name, count };
-    otherParts.forEach(part => {
-        let sectionIndex = sectionRegex.findIndex(sre => sre.test(part));
-        if (sectionIndex >= 0) {
-            let section = sectionNames[sectionIndex];
-            monster[section] = part.substring(section.length).trim();
-        }
-    });
-    return monster;
+    if (nameMatch) {
+        let name = nameMatch[1] || nameMatch[3];
+        let count = parseInt(nameMatch[2]) || 1;
+        let otherParts = str.substr(nameEnd + 1).trim().split(";").map(p => p.trim());
+        let monster = { name, count };
+        otherParts.forEach(part => {
+            let sectionIndex = sectionRegex.findIndex(sre => sre.test(part));
+            if (sectionIndex >= 0) {
+                let section = sectionNames[sectionIndex];
+                monster[section] = part.substring(section.length).trim();
+            }
+        });
+        return monster;
+    } else {
+        return null;
+    }
 };
 
 const fixSections = monster => {
@@ -120,12 +127,51 @@ const flattenBlocks = monstersInBlocks => {
     return result;
 }
 
-const load = () => {
-    alert("Not implemented");
+const load = async() => {
+    let response = await fetch(dataUrl);
+    if (response.ok) { // if HTTP-status is 200-299
+        // get the response body (the method explained below)
+        let data = await response.json();
+        let pages = document.querySelectorAll(".page");
+        let pageCountDiff = data.length - pages.length;
+        for (let i = 0; i < pageCountDiff; i++) {
+            add();
+        }
+        for (let i = pageCountDiff; i < 0; i++) {
+            remove();
+        }
+        pages = document.querySelectorAll(".page");
+        pages.forEach((page, pageIndex) => {
+            let encounterData = data[pageIndex];
+            page.querySelector(".title").value = encounterData.name;
+            let monsterBlocks = page.querySelectorAll(".monsterBox>textarea");
+            monsterBlocks.forEach((ta, mbIndex) => ta.value = encounterData.monsterBlocks[mbIndex] || "");
+            let parseButtons = page.querySelectorAll(".monsterBox>button");
+            parseButtons.forEach((btn, btnIndex) => parse(btn, btnIndex));
+        });
+    } else {
+        alert("HTTP-Error: " + response.status);
+    }
 };
 
-const save = () => {
-    alert("Not implemented");
+const save = async() => {
+    let data = [];
+    let pages = document.querySelectorAll(".page");
+    pages.forEach((page, pageIndex) => {
+        let encounterData = { name: "", monsterBlocks: [] };
+        encounterData.name = page.querySelector(".title").value;
+        let monsterBlocks = page.querySelectorAll(".monsterBox>textarea");
+        monsterBlocks.forEach((ta, mbIndex) => encounterData.monsterBlocks[mbIndex] = ta.value || "");
+        data.push(encounterData);
+    });
+
+    let response = await fetch(dataUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(data)
+    });
 };
 
 const add = () => {
