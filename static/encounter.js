@@ -56,6 +56,8 @@ const sectionNames = [
     "hp",
     "#AT",
     "Dmg",
+    "SA",
+    "SD",
     "AL",
     "XP",
     "THACO"
